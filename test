@@ -1,0 +1,15 @@
+CAP LS 302
+PASS pass
+NICK user42
+
+USER user42 dakdj  dqwjkdqlw dlq wdqwd i
+JOIN #rrr
+Hello, World!
+MSG #rrr Hello, WORLD!
+PRVMSG #rrr HELLO, WORLD!
+
+CAP LS 302
+PASS outra coisa
+NICK marico
+USER marico wjkdqlw dlq wdqwd i
+JOIN #rrr
