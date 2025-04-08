@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 23:22:55 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/11 17:54:02 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/07 20:58:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,11 @@ public:
 		const std::string& msg, Channel *channel = 0);
 	bool notify(int fd, std::string color, int toWhom, int header, int footer, \
 		const std::string& msg, Channel *channel = 0);
+
+	bool cmdWhoCheckArgs(const std::vector<std::string>& args);
+	bool cmdWhoCheck(const std::vector<std::string>& args, int clientFd);
+	void cmdWho(const std::vector<std::string>& args, int clientFd);
+
 };
 
 #endif

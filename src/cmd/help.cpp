@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   help.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 16:00:17 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/24 14:03:49 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/07 21:00:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ std::string Server::cmdDescription(const std::string& command)
 	descriptionMap["quit"] = "disconnects from the server";
 	descriptionMap["topic"] = "sets a channel's topic";
 	descriptionMap["user"] = "sets the username";
+	descriptionMap["who"] = "lists all available users";
 
 	std::map<std::string, std::string>::const_iterator it;
 	it = descriptionMap.find(command);
@@ -50,6 +51,7 @@ std::string Server::cmdUsage(const std::string& command)
 	usageMap["quit"] = "/quit [<quit message>]";
 	usageMap["topic"] = "/topic <channel> [<description or message>]";
 	usageMap["user"] = "/user <new username>";
+	usageMap["who"] = "/who";
 
 	std::map<std::string, std::string>::const_iterator it;
 	it = usageMap.find(command);
@@ -73,6 +75,7 @@ std::string Server::cmdDetail(const std::string& command)
 	cmdDetail["quit"] ="message printable";
 	cmdDetail["topic"] ="channel #alphanum; message printable chars; max 15 dig";
 	cmdDetail["user"] ="username alphanum; max 9 dig";
+	cmdDetail["who"] ="no args";
 
 	std::map<std::string, std::string>::const_iterator it;
 	it = cmdDetail.find(command);
@@ -86,7 +89,7 @@ bool Server::cmdHelpCheck(const std::vector<std::string>& args, int clientFd)
 	if (args.empty())
 		return (notify(clientFd, WHI, 2, 1, 1, "use : '/help <command>'\n"
 			" available commands: join, part, msg, invite, kick, \n"
-			"                     list, mode, quit, topic, user"));
+			"                     list, mode, , who"));
 
 	else if (args.size() == 1 && cmdUsage(args[0]) == "unknown")
 		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help help'"));

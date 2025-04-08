@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/12 16:38:26 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 12:46:46 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/07 21:01:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,8 @@ std::map<std::string, Server::CommandFunc> Server::initCommandMap(void)
 	commandMap["/quit"] = &Server::cmdQuit;
 	commandMap["/topic"] = &Server::cmdTopic;
 	commandMap["/user"] = &Server::cmdUser;
+	commandMap["/who"] = &Server::cmdWho;
+
 	return (commandMap);
 }
 
