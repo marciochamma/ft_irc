@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 22:43:31 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/08 20:33:52 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/07 22:06:37 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@ bool Server::cmdNickCheckArgs(const std::vector<std::string>& args)
 bool Server::cmdNickCheck(const std::vector<std::string>& args, int clientFd)
 {
 	if (!cmdNickCheckArgs(args))
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help nick'"));
+	{
+		Client* client = getClientByFd(clientFd);
+		std::string currentNick = client->getNick();
+		return (notify(clientFd, WHI, 2, 1, 1, "Your nick is: " + currentNick));
+	}
 
 	std::vector<Client*>::iterator it;
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)

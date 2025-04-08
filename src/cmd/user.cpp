@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 19:48:36 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/24 14:05:33 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/07 22:10:18 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ bool Server::cmdUserCheckArgs(const std::vector<std::string>& args)
 {
 	if (args.size() == 0)
 		return (false);
-	
+
 	if (!checkAlphanum(args[0], 0))
 		return (false);
 
@@ -26,7 +26,11 @@ bool Server::cmdUserCheckArgs(const std::vector<std::string>& args)
 bool Server::cmdUserCheck(const std::vector<std::string>& args, int clientFd)
 {
 	if (!cmdUserCheckArgs(args))
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help user'"));
+	{
+		Client* client = getClientByFd(clientFd);
+		std::string currentUser = client->getUser();
+		return(notify(clientFd, WHI, 2, 1, 1, "Your user is: " + currentUser));
+	}
 
 	std::vector<Client*>::iterator it;
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
