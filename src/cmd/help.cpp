@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   help.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 16:00:17 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 21:00:45 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/09 20:43:23 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,26 +86,29 @@ std::string Server::cmdDetail(const std::string& command)
 
 bool Server::cmdHelpCheck(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
+
 	if (args.empty())
-		return (notify(clientFd, WHI, 2, 1, 1, "use : '/help <command>'\n"
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "use : '/help <command>'\n"
 			" available commands: join, part, msg, invite, kick, \n"
 			"                     list, mode, , who"));
 
 	else if (args.size() == 1 && cmdUsage(args[0]) == "unknown")
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help help'"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "error : check '/help help'"));
 
 	else if (args.size() > 1)
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help help'"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "error : check '/help help'"));
 
 	return (true);
 }
 
 void Server::cmdHelp(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
 	if (!cmdHelpCheck(args, clientFd))
 		return ;
 
-	notify(clientFd, WHI, 2, 1, 1, "\n"
+	notify(clientFd, WHI(isIRC), 2, 1, 1, "\n"
 		" Usage: " +cmdUsage(args[0]) +"\n"
 		" Description: " + cmdDescription(args[0]) +"\n"
 		" Detail: " +cmdDetail(args[0]));

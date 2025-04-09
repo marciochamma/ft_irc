@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/27 23:22:55 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 20:58:30 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/09 20:29:49 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "Headers.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
+#include "ColorUtils.hpp"
 
 class Server
 {
@@ -53,7 +54,7 @@ public:
 	void clearClientFromVector(int clientFd);
 	void closeAllFds(void);
 
-	
+
 	// Utils
 	std::string getCurrentLocalTime(void);
 	std::string intToStr(size_t num);

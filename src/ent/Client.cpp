@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:37:23 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/11 16:34:29 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/09 20:25:17 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,4 +111,8 @@ void Client::setCapNegotiationComplete(bool value)
 void Client::clearBuffer(void)
 {
 	this->_buffer.clear();
+}
+
+bool Client::isIRCClient() const {
+	return _pwd == "HEXCHAT";
 }

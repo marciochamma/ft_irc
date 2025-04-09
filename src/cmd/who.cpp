@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   who.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 22:43:31 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 21:03:02 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/09 20:54:27 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ bool Server::cmdWhoCheckArgs(const std::vector<std::string>& args)
 
 bool Server::cmdWhoCheck(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
+
 	if (!cmdWhoCheckArgs(args))
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help Who'"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "error : check '/help Who'"));
 
 	// Client* client = getClientByFd(clientFd);
 
@@ -31,7 +33,7 @@ bool Server::cmdWhoCheck(const std::vector<std::string>& args, int clientFd)
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
 	{
 
-		notify(clientFd, WHI, 2, 1, 1, (*it)->getNick()); //colocar mais coisas ipaddres username
+		notify(clientFd, WHI(isIRC), 2, 1, 1, (*it)->getNick()); //colocar mais coisas ipaddres username
 	}
 
 	return (true);
@@ -40,15 +42,16 @@ bool Server::cmdWhoCheck(const std::vector<std::string>& args, int clientFd)
 void Server::cmdWho(const std::vector<std::string>& args, int clientFd)
 {
 
-	
+
 	Client* client = getClientByFd(clientFd);
-	
+	bool isIRC = client->isIRCClient();
+
 	if (!client->getCurrentChannel() || client->getCurrentChannel()->getName().empty())
 	{
-		notify(clientFd, WHI, 2, 1, 1, "can't verify users; you're not active in any channel ");
+		notify(clientFd, WHI(isIRC), 2, 1, 1, "can't verify users; you're not active in any channel ");
 		return ;
 	}
-	
+
 	if (!cmdWhoCheck(args, clientFd))
 		return ;
 }

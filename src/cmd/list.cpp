@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 17:45:02 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/08 20:33:30 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/09 20:45:39 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,10 @@ std::string cmdListHeader(void)
 
 bool Server::cmdListCheck(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
+
 	if (!args.empty())
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help list'"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "error : check '/help list'"));
 
 	return (true);
 }
@@ -78,14 +80,16 @@ void Server::cmdList(const std::vector<std::string>& args, int clientFd)
 		return ;
 
 	Client* client = getClientByFd(clientFd);
+	bool isIRC = client->isIRCClient();
+
 	Channel* currentChannel = client->getCurrentChannel();
 	bool hasCurrentChannel = (currentChannel != NULL);
 
-	notify(clientFd, WHI, 2, 1, 1, "List of channels");
-	notify(clientFd, WHI, 2, 0, 1, cmdListHeader().c_str());
+	notify(clientFd, WHI(isIRC), 2, 1, 1, "List of channels");
+	notify(clientFd, WHI(isIRC), 2, 0, 1, cmdListHeader().c_str());
 
 	std::vector<Channel*>::iterator it;
 	for (it = this->_channels.begin(); it != this->_channels.end(); ++it)
-		notify(clientFd, WHI, 2, 0, 1, cmdListBody(*it, client, \
+		notify(clientFd, WHI(isIRC), 2, 0, 1, cmdListBody(*it, client, \
 			currentChannel, hasCurrentChannel).c_str());
 }

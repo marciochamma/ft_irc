@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 18:22:56 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/12 09:55:46 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/09 20:41:56 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,8 +158,10 @@ void Server::statusChannel(Channel* channel)
 
 void Server::status()
 {
+
+	bool isIRC = false;
 	std::cout <<"\n";
-	std::cout <<BLU <<"Qty clients = " <<this->_clients.size() <<WHI <<"\n";
+	std::cout <<BLU(isIRC) <<"Qty clients = " <<this->_clients.size() <<WHI(isIRC) <<"\n";
 	std::vector<Client*>::iterator itc;
 	for (itc = this->_clients.begin(); itc != this->_clients.end(); ++itc)
 	{
@@ -167,7 +169,7 @@ void Server::status()
 		std::cout <<"\n";
 	}
 
-	std::cout <<BLU <<"Qty channels = " <<this->_channels.size() <<WHI <<"\n";
+	std::cout <<BLU(isIRC) <<"Qty channels = " <<this->_channels.size() <<WHI(isIRC) <<"\n";
 	std::vector<Channel*>::iterator ith;
 	for (ith = this->_channels.begin(); ith != this->_channels.end(); ++ith)
 	{

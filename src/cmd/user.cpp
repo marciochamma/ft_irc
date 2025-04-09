@@ -6,7 +6,7 @@
 /*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 19:48:36 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 22:10:18 by ajuliao-         ###   ########.fr       */
+/*   Updated: 2025/04/09 20:52:37 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,19 @@ bool Server::cmdUserCheckArgs(const std::vector<std::string>& args)
 
 bool Server::cmdUserCheck(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
 	if (!cmdUserCheckArgs(args))
 	{
 		Client* client = getClientByFd(clientFd);
 		std::string currentUser = client->getUser();
-		return(notify(clientFd, WHI, 2, 1, 1, "Your user is: " + currentUser));
+
+		return(notify(clientFd, WHI(isIRC), 2, 1, 1, "Your user is: " + currentUser));
 	}
 
 	std::vector<Client*>::iterator it;
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
 		if ((*it)->getUser() == args[0])
-			return (notify(clientFd, WHI, 2, 1, 1, "can't set user; this user was already taken"));
+			return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't set user; this user was already taken"));
 
 	return (true);
 }
@@ -47,12 +49,13 @@ void Server::cmdUser(const std::vector<std::string>& args, int clientFd)
 
 	Client* client = getClientByFd(clientFd);
 	std::string oldUser = client->getUser();
+	bool isIRC = client->isIRCClient();
 
 	client->setUser(args[0]);
-	notify (clientFd, WHI, 2, 1, 1, "set new user: " +args[0]);
+	notify (clientFd, WHI(isIRC), 2, 1, 1, "set new user: " +args[0]);
 
 	std::vector<Channel*>::iterator it;
 	for (it = this->_channels.begin(); it != this->_channels.end(); ++it)
 		if ((*it)->isClientOnChannel(client))
-			notify(clientFd, WHI, 4, 1, 1, "changed the user from " +oldUser +" to " +args[0], *it);
+			notify(clientFd, WHI(isIRC), 4, 1, 1, "changed the user from " +oldUser +" to " +args[0], *it);
 }

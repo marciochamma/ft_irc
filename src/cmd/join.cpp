@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:36:34 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/24 13:45:48 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/09 20:32:22 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,10 @@ bool Server::cmdJoinCheckArgs(const std::vector<std::string>& args)
 
 bool Server::cmdJoinCheck(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
+
 	if (!cmdJoinCheckArgs(args))
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help join'"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "error : check '/help join'"));
 
 	Channel* channel = getChannelByName(args[0]);
 	Client* client = getClientByFd(clientFd);
@@ -47,23 +49,23 @@ bool Server::cmdJoinCheck(const std::vector<std::string>& args, int clientFd)
 	if (channel->isClientOnChannel(client))
 	{
 		client->setCurrentChannel(channel);
-		return (notify(clientFd, WHI, 2, 1, 1, "is active on this channel"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "is active on this channel"));
 	}
 
 	if (!channel->getPwd().empty() && (args.size() != 2 || channel->getPwd() != args[1]) && channel->getOneMode("k"))
-		return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; password incorrect"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't join this channel; password incorrect"));
 
 	// if (channel->getPwd().empty() && args.size() == 2)
-	// 	return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; password not necessary"));
+	// 	return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't join this channel; password not necessary"));
 
 	if (args.size() == 2 && !channel->getOneMode("k"))
-		return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; password not necessary"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't join this channel; password not necessary"));
 
 	if (!channel->isInvitee(client->getNick()) && channel->getOneMode("i"))
-		return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; you're not in guest list"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't join this channel; you're not in guest list"));
 
 	if (channel->getClients().size() >= channel->getLimit() && channel->getOneMode("l"))
-		return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; channel full"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't join this channel; channel full"));
 
 	return (true);
 }
@@ -75,6 +77,7 @@ void Server::cmdJoin(const std::vector<std::string>& args, int clientFd)
 
 	Channel* channel = getChannelByName(args[0]);
 	Client* client = getClientByFd(clientFd);
+	bool isIRC = client->isIRCClient();
 	bool isCreator = false;
 
 	if (!channel)
@@ -87,19 +90,19 @@ void Server::cmdJoin(const std::vector<std::string>& args, int clientFd)
 			channel->setPwd(args[1]);
 			channel->setOneMode("+k");
 		}
-		notify(clientFd, WHI, 2, 1, 1, "created " +channel->getName());
+		notify(clientFd, WHI(isIRC), 2, 1, 1, "created " +channel->getName());
 	}
 
 	channel->addClient(client);
-	notify(clientFd, WHI, 2, 1, 1, "joined to " + channel->getName());
-	notify(clientFd, WHI, 4, 1, 1, "joined to channel", channel);
+	notify(clientFd, WHI(isIRC), 2, 1, 1, "joined to " + channel->getName());
+	notify(clientFd, WHI(isIRC), 4, 1, 1, "joined to channel", channel);
 
 	if (isCreator)
 	{
 		channel->addOperator(client);
-		notify(clientFd, WHI, 2, 1, 1, "named operator of " + channel->getName());
+		notify(clientFd, WHI(isIRC), 2, 1, 1, "named operator of " + channel->getName());
 	}
 
 	client->setCurrentChannel(channel);
-	notify(clientFd, WHI, 2, 1, 1, "is now active on " + channel->getName());
+	notify(clientFd, WHI(isIRC), 2, 1, 1, "is now active on " + channel->getName());
 }

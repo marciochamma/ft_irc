@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/12 16:38:26 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 21:01:37 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/09 20:56:51 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ bool	Server::_signal = false;
 void	Server::signalHandler(int signal)
 {
 	(void) signal;
-	std::cout <<YEL <<" >> Interrupt Signal" <<WHI <<std::endl;
+	std::cout <<YEL(false) <<" >> Interrupt Signal" <<WHI(false) <<std::endl;
 	Server::_signal = true;
 }
 
@@ -75,7 +75,7 @@ void	Server::initServerSocket(void)
 
 void Server::runServer(void)
 {
-	std::cout <<TIME <<GRE <<"<Serv" <<this->_servFd <<"> connected" <<WHI <<std::endl;
+	std::cout <<TIME <<GRE(false) <<"<Serv" <<this->_servFd <<"> connected" <<WHI(false) <<std::endl;
 
 	while (!Server::_signal)
 	{
@@ -205,6 +205,7 @@ void Server::authenticate(const std::vector<std::string>& tokens, int clientFd)
 {
 	std::string password = "";
 	std::string note;
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
 
 	if (tokens.size() == 2 && tokens[0] == "PASS")
 		password = tokens[1];
@@ -220,7 +221,7 @@ void Server::authenticate(const std::vector<std::string>& tokens, int clientFd)
 		return;
 	}
 
-	note = GRE + TIME + "<User" + intToStr(clientFd) + "> connected" + WHI + "\n";
+	note = GRE(isIRC) + TIME + "<User" + intToStr(clientFd) + "> connected" + WHI(isIRC) + "\n";
 	std::cout << note;
 	send(clientFd, note.c_str(), strlen(note.c_str()), 0);
 	getClientByFd(clientFd)->setStatus(AUTHENTICATED);
@@ -279,10 +280,11 @@ void Server::unknownCommand(std::string command, int clientFd)
 void Server::directMsg(const std::vector<std::string>& tokens, int clientFd)
 {
 	Client* client = getClientByFd(clientFd);
+	bool isIRC = client->isIRCClient();
 
 	if (!client->getCurrentChannel() || client->getCurrentChannel()->getName().empty())
 	{
-		notify(clientFd, WHI, 2, 1, 1, "can't send msg; you're not active in any channel ");
+		notify(clientFd, WHI(isIRC), 2, 1, 1, "can't send msg; you're not active in any channel ");
 		return ;
 	}
 
@@ -297,8 +299,10 @@ void Server::directMsg(const std::vector<std::string>& tokens, int clientFd)
 
 void Server::disconnectClient(int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
+
 	std::string note;
-	note = RED + TIME + "<User" + intToStr(clientFd) + "> disconnected" + WHI + "\n";
+	note = RED(isIRC) + TIME + "<User" + intToStr(clientFd) + "> disconnected" + WHI(isIRC) + "\n";
 	std::cout << note;
 	send(clientFd, note.c_str(), strlen(note.c_str()), 0);
 
@@ -341,9 +345,10 @@ void Server::closeAllFds(void)
 
 	for (size_t i = 0; i < this->_clients.size(); i++)
 	{
+		bool isIRC = this->_clients[i]->isIRCClient();
 		if (this->_clients[i] == NULL)
 			continue ;
-		note = RED +TIME +"<User" +intToStr(_clients[i]->getFd()) +"> disconnected" +WHI +"\n";
+		note = RED(isIRC) + TIME +"<User" +intToStr(_clients[i]->getFd()) +"> disconnected" + WHI(isIRC) +"\n";
 		std::cout <<note; send(_clients[i]->getFd(), note.c_str(), strlen(note.c_str()), 0);
 		close(this->_clients[i]->getFd());
 		delete this->_clients[i];
@@ -352,7 +357,8 @@ void Server::closeAllFds(void)
 
 	if (this->_servFd != -1)
 	{
-		std::cout <<RED <<TIME <<"<Serv" <<this->_servFd <<"> disconnected" <<WHI <<std::endl;
+		bool isIRC = false;
+		std::cout <<RED(isIRC) <<TIME <<"<Serv" <<this->_servFd <<"> disconnected" <<WHI(isIRC) <<std::endl;
 		close(this->_servFd);
 		this->_servFd = -1;
 	}

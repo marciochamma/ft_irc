@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:37:02 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/11 16:34:21 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/09 20:16:32 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ public:
 	void 	setCapNegotiationComplete(bool value);
 
 	void 	clearBuffer(void);
+	bool	isIRCClient() const;
 };
 
 #endif

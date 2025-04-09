@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:13:51 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/08 20:33:24 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/09 20:44:56 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,27 +28,28 @@ bool Server::cmdKickCheckArgs(const std::vector<std::string>& args)
 
 bool Server::cmdKickCheck(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
 	if (!cmdKickCheckArgs(args))
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help kick'"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "error : check '/help kick'"));
 
 	Client* kicker = getClientByFd(clientFd);
 	Client* kicked = getClientByNick(args[0]);
 	Channel* channel = getChannelByName(args[1]);
 
 	if (!channel)
-		return (notify(clientFd, WHI, 2, 1, 1, "can't kick; channel doesn't exist"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't kick; channel doesn't exist"));
 
 	if (!channel->isClientOnChannel(kicker))
-		return (notify(clientFd, WHI, 2, 1, 1, "can't kick; you haven't joined this channel"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't kick; you haven't joined this channel"));
 
 	if (!channel->isOperatorOnChannel(kicker) && channel->getOneMode("o"))
-		return (notify(clientFd, WHI, 2, 1, 1, "can't kick; you're not channel's operator"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't kick; you're not channel's operator"));
 
 	if (!kicked)
-		return (notify(clientFd, WHI, 2, 1, 1, "can't kick; this user doesn't exist"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't kick; this user doesn't exist"));
 
 	if (!channel->isClientOnChannel(kicked))
-		return (notify(clientFd, WHI, 2, 1, 1, "can't kick; this user does not joined to channel"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't kick; this user does not joined to channel"));
 
 	return (true);
 }
@@ -60,13 +61,13 @@ void Server::cmdKick(const std::vector<std::string>& args, int clientFd)
 
 	Client* kicked = getClientByNick(args[0]);
 	Channel* channel = getChannelByName(args[1]);
-
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
 	channel->removeClient(kicked);
 
-	notify(clientFd, WHI, 2, 1, 1, "kicked " +kicked->getNick() +" from this channel");
-	notify(clientFd, WHI, 4, 1, 1, "kicked " +kicked->getNick(), channel);
+	notify(clientFd, WHI(isIRC), 2, 1, 1, "kicked " +kicked->getNick() +" from this channel");
+	notify(clientFd, WHI(isIRC), 4, 1, 1, "kicked " +kicked->getNick(), channel);
 
-	std::string note = forgeNote(clientFd, WHI, 4, 1, 1, "kicked you from " +channel->getName(), channel);
+	std::string note = forgeNote(clientFd, WHI(isIRC), 4, 1, 1, "kicked you from " +channel->getName(), channel);
 	send(kicked->getFd(), note.c_str(), note.length(), 0);
 
 }

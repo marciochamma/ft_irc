@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_cmd.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:27 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/11 17:35:24 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/09 20:53:34 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,9 @@ std::string Server::forgeNote(int fd, std::string color, int toWhom, int header,
 			note += "<Serv" +intToStr(this->_servFd) +"> ";
 		else
 			note += +"<" + getClientByFd(fd)->getNick() +"> ";
-	}
+	};
 
-	note += msg +WHI;
+	note += msg +WHI(false);
 
 	if (footer == 1)
 		note += "\r\n";

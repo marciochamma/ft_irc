@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   msg.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 00:29:07 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/11 17:34:24 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/09 20:49:21 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,10 @@ void Server::sendMsgPrivate(const std::vector<std::string>& args, int senderFd)
 {
 	Client* sender = getClientByFd(senderFd);
 	Client* receiver = getClientByNick(args[0]);
+	bool isIRC = getClientByFd(receiver->getFd())->isIRCClient();
 
-	std::string header = WHI + TIME +"<" +sender->getNick() +"> says privately: ";
-	std::string footer = WHI + "\n";
+	std::string header = WHI(isIRC) + TIME +"<" +sender->getNick() +"> says privately: ";
+	std::string footer = WHI(isIRC) + "\n";
 
 	send(receiver->getFd(), header.c_str(),header.length(), 0);
 	sendMsg(args, receiver->getFd());
@@ -42,10 +43,11 @@ void Server::sendMsgChannel(const std::vector<std::string>& args, int senderFd)
 {
 	Channel* channel = getChannelByName(args[0]);
 	Client* sender = getClientByFd(senderFd);
+	bool isIRC = getClientByFd(sender->getFd())->isIRCClient();
 
-	std::string header = WHI + TIME +"[" +channel->getName() + "] " +"<" \
+	std::string header = WHI(isIRC) + TIME +"[" +channel->getName() + "] " +"<" \
 		+sender->getNick() +"> says: ";
-	std::string footer = WHI + "\n";
+	std::string footer = WHI(isIRC) + "\n";
 
 	for (size_t i = 0; i < this->_clients.size(); ++i)
 		if (this->_clients[i]->getFd() != sender->getFd() \
@@ -70,8 +72,10 @@ bool Server::cmdMsgCheckArgs(const std::vector<std::string>& args)
 
 bool Server::cmdMsgCheck(const std::vector<std::string>& args, int clientFd)
 {
+		bool isIRC = getClientByFd(clientFd)->isIRCClient();
+
 	if (!cmdMsgCheckArgs(args))
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help msg'"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "error : check '/help msg'"));
 
 	// if (args[1].empty()) // Corrigir envio de mensagem vazia so com quebra de linha;
 	// 	return (notify(clientFd, WHI, 2, 1, 1, "can't send msg; empty msg"));
@@ -82,37 +86,38 @@ bool Server::cmdMsgCheck(const std::vector<std::string>& args, int clientFd)
 		argsChars += it->length();
 
 	if (argsChars > 512)
-		return (notify(clientFd, WHI, 2, 1, 1, "can't send msg; exceed limit of 512 chars"));
+		return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't send msg; exceed limit of 512 chars"));
 
 	if (args[0][0] == '#')
 	{
 		if (args[0][0] == '#' && !getChannelByName(args[0]))
-			return (notify(clientFd, WHI, 2, 1, 1, "can't send msg; channel doesn't exist"));
+			return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't send msg; channel doesn't exist"));
 
 		if (args[0][0] == '#' && !getChannelByName(args[0])->isClientOnChannel(getClientByFd(clientFd)))
-			return (notify(clientFd, WHI, 2, 1, 1, "can't send msg; you haven't joined this channel"));
+			return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't send msg; you haven't joined this channel"));
 	}
 	else
 		if (!getClientByNick(args[0]))
-			return (notify(clientFd, WHI, 2, 1, 1, "can't send msg; this user doesn't exist"));
+			return (notify(clientFd, WHI(isIRC), 2, 1, 1, "can't send msg; this user doesn't exist"));
 
 	return (true);
 }
 
 void Server::cmdMsg(const std::vector<std::string>& args, int clientFd)
 {
+	bool isIRC = getClientByFd(clientFd)->isIRCClient();
 	if (!cmdMsgCheck(args, clientFd))
 		return ;
 
 	if (args[0][0] == '#')
 	{
 		sendMsgChannel(args, clientFd);
-		notify(clientFd, WHI, 2, 0, 1, "  ↳ message delivered!");
+		notify(clientFd, WHI(isIRC), 2, 0, 1, "  ↳ message delivered!");
 	}
 
 	else
 	{
 		sendMsgPrivate(args, clientFd);
-		notify(clientFd, WHI, 2, 0, 1, "  ↳ private message delivered!");
+		notify(clientFd, WHI(isIRC), 2, 0, 1, "  ↳ private message delivered!");
 	}
 }
