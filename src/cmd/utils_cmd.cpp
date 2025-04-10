@@ -6,7 +6,7 @@
 /*   By: ajuliao- <ajuliao-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:27 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/09 20:53:34 by ajuliao-         ###   ########.fr       */
+/*   Updated: 2025/04/10 20:57:13 by ajuliao-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ bool Server::checkPrintable(const std::string& str)
 std::string Server::forgeNote(int fd, std::string color, int toWhom, int header, int footer, \
 	const std::string& msg, Channel *channel)
 {
+	bool isIRC = getClientByFd(toWhom)->isIRCClient();
+
 	(void)toWhom;
 	std::string note = color;
 
@@ -81,7 +83,7 @@ std::string Server::forgeNote(int fd, std::string color, int toWhom, int header,
 			note += +"<" + getClientByFd(fd)->getNick() +"> ";
 	};
 
-	note += msg +WHI(false);
+	note += msg +WHI(isIRC);
 
 	if (footer == 1)
 		note += "\r\n";
