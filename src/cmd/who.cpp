@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 22:43:31 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 21:03:02 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/12 14:35:03 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,13 @@ bool Server::cmdWhoCheckArgs(const std::vector<std::string>& args)
 bool Server::cmdWhoCheck(const std::vector<std::string>& args, int clientFd)
 {
 	if (!cmdWhoCheckArgs(args))
-		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help Who'"));
-
-	// Client* client = getClientByFd(clientFd);
+		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help who'"));
 
 	std::vector<Client*>::iterator it;
 	for (it = this->_clients.begin(); it != this->_clients.end(); ++it)
 	{
 
-		notify(clientFd, WHI, 2, 1, 1, (*it)->getNick()); //colocar mais coisas ipaddres username
+		notify(clientFd, WHI, 2, 1, 1, (*it)->getNick());
 	}
 
 	return (true);

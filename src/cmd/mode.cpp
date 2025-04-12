@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:10:00 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/12 10:40:22 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/12 14:32:14 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,22 +109,6 @@ void Server::cmdMode(const std::vector<std::string>& args, int clientFd)
 				i++;
 			}
 		}
-
-		// else if (args[i] == "+o" || args[i] == "-o")
-		// {
-			// channel->setOneMode(args[i]);
-			// notify(clientFd, WHI, 6, 1, 1, cmdFlagAction(args[i]), channel);
-			// if (i + 1 < args.size() && checkAlphanum(args[i + 1], 0))
-			// {
-				// if (args[i] == "+o")
-					// channel->addOperator(getClientByNick(args[i + 1]));
-				// else if (args[i] == "-o")
-					// channel->removeOperator(getClientByNick(args[i + 1]));
-				// i++;
-			// }
-		// }
-
-
 		else if (args[i] == "+o" || args[i] == "-o")
 		{
 			notify(clientFd, WHI, 6, 1, 1, cmdFlagAction(args[i]), channel);

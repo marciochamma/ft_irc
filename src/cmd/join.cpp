@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:36:34 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/24 13:45:48 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/12 14:31:41 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,6 @@ bool Server::cmdJoinCheck(const std::vector<std::string>& args, int clientFd)
 
 	if (!channel->getPwd().empty() && (args.size() != 2 || channel->getPwd() != args[1]) && channel->getOneMode("k"))
 		return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; password incorrect"));
-
-	// if (channel->getPwd().empty() && args.size() == 2)
-	// 	return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; password not necessary"));
 
 	if (args.size() == 2 && !channel->getOneMode("k"))
 		return (notify(clientFd, WHI, 2, 1, 1, "can't join this channel; password not necessary"));
