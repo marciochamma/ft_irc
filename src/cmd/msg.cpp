@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   msg.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 00:29:07 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/11 17:34:24 by mchamma          ###   ########.fr       */
+/*   Updated: 2025/04/12 14:34:17 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,6 @@ bool Server::cmdMsgCheck(const std::vector<std::string>& args, int clientFd)
 {
 	if (!cmdMsgCheckArgs(args))
 		return (notify(clientFd, WHI, 2, 1, 1, "error : check '/help msg'"));
-
-	// if (args[1].empty()) // Corrigir envio de mensagem vazia so com quebra de linha;
-	// 	return (notify(clientFd, WHI, 2, 1, 1, "can't send msg; empty msg"));
 
 	size_t argsChars = 0;
 	std::vector<std::string>::const_iterator it;

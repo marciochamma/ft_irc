@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/12 16:38:26 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/07 21:01:37 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/12 14:31:46 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,8 +159,6 @@ void Server::handleClient(int clientFd)
 		disconnectClient(clientFd);
 		return;
 	}
-
-	// std::cout <<buff <<std::endl;
 
 	client->setBuffer(buff);
 	if (client->getBuffer().find_first_of("\r\n") == std::string::npos)
