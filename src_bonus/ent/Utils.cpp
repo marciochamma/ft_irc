@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: fde-alen <fde-alen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 18:22:56 by mchamma           #+#    #+#             */
-/*   Updated: 2025/02/12 09:55:46 by user42           ###   ########.fr       */
+/*   Updated: 2025/04/13 11:31:07 by fde-alen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ std::string Server::intToStr(size_t num)
 
 std::string Server::transfCmd(const std::string& arg)
 {
+	if (arg == "ADDBOT") return "/addbot";
 	if (arg == "CAP") return "/cap";
 	if (arg == "HELP") return "/help";
 	if (arg == "INVITE") return "/invite";
