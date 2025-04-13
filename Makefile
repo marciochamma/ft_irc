@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mchamma <mchamma@student.42sp.org.br>      +#+  +:+       +#+         #
+#    By: fde-alen <fde-alen@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/27 23:19:17 by mchamma           #+#    #+#              #
-#    Updated: 2025/02/11 01:08:13 by mchamma          ###   ########.fr        #
+#    Updated: 2025/04/12 21:37:14 by fde-alen         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ FLAGS = -std=c++98 -Werror -Wextra -Wall
 
 SRC_DIR = src/
 OBJ_DIR = obj/
+BONUS_OBJ_DIR = bonus_obj/
 
 SRC = $(shell find src -name "*.cpp")
 OBJ = $(patsubst $(SRC_DIR)%.cpp,$(OBJ_DIR)%.o,$(SRC))
@@ -35,10 +36,12 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 
 clean:
 	rm -rf $(OBJ_DIR)
+	rm -rf $(BONUS_OBJ_DIR)
 	clear
 
 fclean: clean
 	rm -f $(NAME)
+	rm -f $(BONUS_NAME)
 	clear
 
 re: fclean all
@@ -66,6 +69,40 @@ nc:
 #--------------------//-------------------#
 
 .PHONY: all clean fclean re r
+
+
+#--------------------//-------------------#
+# Bonus rules
+#--------------------//-------------------#
+
+BONUS_NAME      = ircserv_bonus
+BONUS_SRC_DIR   = src_bonus/
+BONUS_OBJ_DIR   = bonus_obj/
+BONUS_INC       = -I inc_bonus/
+
+BONUS_SRC       = $(shell find $(BONUS_SRC_DIR) -name "*.cpp")
+BONUS_OBJ       = $(patsubst $(BONUS_SRC_DIR)%.cpp,$(BONUS_OBJ_DIR)%.o,$(BONUS_SRC))
+
+bonus: $(BONUS_NAME)
+
+$(BONUS_NAME): $(BONUS_OBJ)
+	$(CC) $(BONUS_OBJ) $(BONUS_INC) $(LIB) -o $(BONUS_NAME)
+
+$(BONUS_OBJ_DIR)%.o: $(BONUS_SRC_DIR)%.cpp
+	@mkdir -p $(dir $@)
+	$(CC) $(FLAGS) $(BONUS_INC) -c $< -o $@
+
+cleanbonus:
+	@rm -rf $(BONUS_OBJ_DIR)
+	@echo "Bonus objects cleaned!"
+
+fcleanbonus: cleanbonus
+	@rm -f $(BONUS_NAME)
+	@echo "Bonus executable cleaned!"
+
+.PHONY: bonus cleanbonus fcleanbonus
+
+#--------------------//-------------------#
 
 # leaks --atExit -- ./program
 

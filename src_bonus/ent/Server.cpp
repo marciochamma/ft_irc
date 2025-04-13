@@ -6,11 +6,12 @@
 /*   By: fde-alen <fde-alen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/12 16:38:26 by mchamma           #+#    #+#             */
-/*   Updated: 2025/04/12 23:22:09 by fde-alen         ###   ########.fr       */
+/*   Updated: 2025/04/13 00:03:09 by fde-alen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Bot.hpp"
 
 Server::Server(void) { }
 
@@ -19,6 +20,8 @@ Server::~Server(void)
 	closeAllFds();
 	for (size_t i = 0; i < this->_channels.size(); i++)
 		delete this->_channels[i];
+	if (this->_bot)
+        delete this->_bot;
 	return ;
 }
 
@@ -172,31 +175,43 @@ void Server::handleClient(int clientFd)
 
 void Server::driveActions(const std::string& input, int clientFd)
 {
-	std::vector<std::string> lines = parseText(input);
-	std::vector<std::string>::iterator itLine;
-	for (itLine = lines.begin(); itLine != lines.end(); ++itLine)
-	{
-		Client* client = getClientByFd(clientFd);
-		if (!client)
-			break ;
+    std::vector<std::string> lines = parseText(input);
+    for (std::vector<std::string>::iterator itLine = lines.begin(); itLine != lines.end(); ++itLine)
+    {
+        Client* client = getClientByFd(clientFd);
+        if (!client)
+            break;
 
-		std::vector<std::string> tokens = parseLine(*itLine);
-		if (tokens.empty())
-			continue;
+        std::vector<std::string> tokens = parseLine(*itLine);
+        if (tokens.empty())
+            continue;
 
-		tokens[0] = transfCmd(tokens[0]);
+        tokens[0] = transfCmd(tokens[0]);
 
-		if (tokens[0] == "/cap")
-			execCmd(tokens, clientFd);
-
-		else if (client->getStatus() == UNAUTHENTICATED)
-			authenticate(tokens, clientFd);
-
-		else if (tokens[0][0] == '/')
-			execCmd(tokens, clientFd);
-		else
-			directMsg(tokens, clientFd);
-	}
+        if (tokens[0] == "/cap")
+            execCmd(tokens, clientFd);
+        else if (client->getStatus() == UNAUTHENTICATED)
+            authenticate(tokens, clientFd);
+        else if (tokens[0][0] == '/')
+            execCmd(tokens, clientFd);
+        else
+        {
+            Channel* currentChannel = client->getCurrentChannel();
+            if (currentChannel && _bot)
+            {
+                if (currentChannel->isClientOnChannel(_bot))
+                {
+                    if (_bot->isCommandForMe(*itLine))
+                    {
+                        std::vector<std::string> botTokens = parseLine(*itLine);
+                        _bot->handleMessage(this, botTokens, clientFd, currentChannel->getName());
+                        continue;
+                    }
+                }
+            }
+            directMsg(tokens, clientFd);
+        }
+    }
 }
 
 void Server::authenticate(const std::vector<std::string>& tokens, int clientFd)
@@ -243,6 +258,7 @@ std::map<std::string, Server::CommandFunc> Server::initCommandMap(void)
 	commandMap["/topic"] = &Server::cmdTopic;
 	commandMap["/user"] = &Server::cmdUser;
 	commandMap["/who"] = &Server::cmdWho;
+	commandMap["/addbot"] = &Server::cmdAddBot;
 
 	return (commandMap);
 }
@@ -295,6 +311,8 @@ void Server::directMsg(const std::vector<std::string>& tokens, int clientFd)
 
 void Server::disconnectClient(int clientFd)
 {
+	if (clientFd == -1) return;
+
 	std::string note;
 	note = RED + TIME + "<User" + intToStr(clientFd) + "> disconnected" + WHI + "\n";
 	std::cout << note;
@@ -354,4 +372,16 @@ void Server::closeAllFds(void)
 		close(this->_servFd);
 		this->_servFd = -1;
 	}
+}
+
+void Server::initBot()
+{
+    this->_bot = new Bot("*42*");
+    this->_bot->setFd(-1);
+    this->_clients.push_back(this->_bot);
+}
+
+Bot* Server::getBot() const
+{
+    return this->_bot;
 }
